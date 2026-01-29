@@ -5,7 +5,7 @@
   "icon": "icon.png",
   "displayName": "Simple CherryTimeLine",
   "description": "Extensión que permite visualizar y gestionar una línea de tiempo interactiva dentro de VS Code.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.108.1"
   },

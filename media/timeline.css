@@ -1,0 +1,753 @@
+/* ============================================
+   Tema Base: Ayu Dark Bordered
+   ============================================ */
+
+:root {
+    /* Colores base Ayu Dark */
+    --bg-primary: #0A0E14;
+    --bg-secondary: #0F1419;
+    --border-color: #1A2128;
+    --border-subtle: #151A1F;
+
+    /* Colores de texto */
+    --text-primary: #E6E1CF;
+    --text-secondary: #B3B1AD;
+    --text-muted: #707A8C;
+
+    /* Colores de rama (Ayu palette) */
+    --branch-blue: #59C2FF;
+    --branch-green: #BAE67E;
+    --branch-orange: #FFAA44;
+    --branch-pink: #F29BC2;
+
+    /* Tamaños de nodos */
+    --line-thickness: 20px;
+    --node-size: 50px;
+    --node-hover-size: 50px;
+    /* exactamente el doble */
+
+    /* Espaciado */
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+}
+
+/* ============================================
+   Reset y Base
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ============================================
+   Timeline Container
+   ============================================ */
+
+.timeline-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.timeline-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+.timeline-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+}
+
+/* ============================================
+   Git Graph Wrapper
+   ============================================ */
+
+.git-graph-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Canvas de grid detrás de todo */
+.grid-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* SVG justo encima del canvas, detrás de los nodos */
+.graph-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
+}
+
+/* Track scrolleable con los nodos */
+.timeline-track {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    cursor: grab;
+    transform-origin: 0 0;
+
+    display: flex;
+    align-items: center;
+}
+
+.timeline-track:active {
+    cursor: grabbing;
+}
+
+.timeline-track::-webkit-scrollbar {
+    height: 8px;
+}
+
+.timeline-track::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+.timeline-track::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.timeline-track::-webkit-scrollbar-thumb:hover {
+    background: #242B35;
+}
+
+.timeline {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-lg);
+    min-width: max-content;
+    position: relative;
+}
+
+/* ============================================
+   Grid Layer (Canvas de fondo)
+   ============================================ */
+
+.grid-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ============================================
+   Grid Layer (Canvas de fondo)
+   ============================================ */
+
+.grid-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ============================================
+   Graph Layer (SVG para líneas)
+   ============================================ */
+
+.graph-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
+}
+
+.branch-line {
+    stroke-width: 3px;
+    fill: none;
+    opacity: 0.8;
+    transition: opacity 150ms ease, stroke-width 150ms ease;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.branch-line.active {
+    opacity: 1;
+    stroke-width: 3.5px;
+}
+
+.branch-line.dimmed {
+    opacity: 0.3;
+}
+
+.branch-0 {
+    color: var(--branch-blue);
+}
+
+.branch-1 {
+    color: var(--branch-green);
+}
+
+.branch-2 {
+    color: var(--branch-orange);
+}
+
+.branch-3 {
+    color: var(--branch-pink);
+}
+
+/* ============================================
+   Panel de Detalles
+   ============================================ */
+
+.details-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 380px;
+    height: 100vh;
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 150ms ease-out, opacity 150ms ease-out;
+    opacity: 0;
+    z-index: 100;
+}
+
+.details-panel:not(.hidden) {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.details-panel.hidden {
+    pointer-events: none;
+}
+
+.panel-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0D1117;
+}
+
+.panel-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+.btn-close:hover {
+    background-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.panel-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.detail-row {
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.detail-content-wrapper {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.content-preview {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: var(--spacing-md);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    overflow-x: auto;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.content-preview::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.content-preview::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.content-preview::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+/* ============================================
+   Botones de Acción
+   ============================================ */
+
+.panel-actions {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: var(--spacing-sm);
+    background-color: #0D1117;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 120ms ease;
+    text-align: center;
+}
+
+.btn-restore {
+    background-color: rgba(89, 194, 255, 0.1);
+    color: var(--branch-blue);
+    border-color: rgba(89, 194, 255, 0.3);
+}
+
+.btn-restore:hover {
+    background-color: rgba(89, 194, 255, 0.2);
+    border-color: var(--branch-blue);
+}
+
+.btn-delete {
+    background-color: rgba(242, 155, 194, 0.1);
+    color: #FF5370;
+    border-color: rgba(255, 83, 112, 0.3);
+}
+
+.btn-delete:hover {
+    background-color: rgba(255, 83, 112, 0.2);
+    border-color: #FF5370;
+}
+
+/* ============================================
+   Utilidades
+   ============================================ */
+
+.hidden {
+    display: none !important;
+}
+
+/* ============================================
+   Animaciones y Estados
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.node {
+    animation: fadeIn 200ms ease-out;
+}
+
+/* Estado dimmed para nodos no seleccionados */
+.node.dimmed {
+    opacity: 0.4;
+}
+
+.node.dimmed .dot {
+    opacity: 0.5;
+}
+
+#viewport {
+    position: relative;
+    overflow: hidden;
+}
+
+#world {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+.node {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0px;
+    cursor: pointer;
+    transition: transform 100ms ease;
+    z-index: 10;
+}
+
+/* Una pequeña guía vertical entre el nodo y el label */
+
+/* ============================================
+   Ramas: definen color heredable
+   ============================================ */
+
+.branch-0 {
+    --branch-color: var(--branch-blue);
+}
+
+.branch-1 {
+    --branch-color: var(--branch-green);
+}
+
+.branch-2 {
+    --branch-color: var(--branch-orange);
+}
+
+.branch-3 {
+    --branch-color: var(--branch-pink);
+}
+
+/* ============================================
+   Fila: líneas + dot sin separación
+   ============================================ */
+
+.line-node-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+/* Línea horizontal del nodo */
+.line {
+    width: 150px;
+    height: var(--line-thickness);
+    background: currentColor;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* ============================================
+   Punto (dot)
+   ============================================ */
+
+.dot-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--node-size);
+    height: var(--node-size);
+}
+
+.dot {
+    width: var(--node-size);
+    height: var(--node-size);
+    border-radius: 50%;
+    background: transparent;
+    /* Fondo transparente para ver el borde */
+    border: 3px solid currentColor;
+    /* Círculo exterior */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* El círculo interno */
+.dot::after {
+    content: '';
+    width: 45%;
+    /* Un poco más pequeño para que se vea más elegante */
+    height: 45%;
+    background: #FFFFFF;
+    /* Núcleo blanco */
+    border-radius: 50%;
+    border: 2px solid var(--bg-primary);
+    /* El borde de separación */
+    display: block;
+}
+
+.node:hover .dot {
+    filter: drop-shadow(0 0 8px currentColor);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+
+/* ============================================
+   Label
+   ============================================ */
+
+.label {
+    margin-top: 10px;
+    /* Un poco más de espacio para que no choque con el nodo */
+    font-size: 14px;
+    /* Ajustado para legibilidad */
+    color: var(--text-secondary);
+
+    /* Control de línea y ancho */
+    max-width: 12ch;
+    /* Limita el ancho a aproximadamente 12 caracteres */
+    display: inline-block;
+    line-height: 1.2;
+    text-align: center;
+    /* Centra el texto bajo la bolita */
+    word-wrap: break-word;
+    /* Rompe palabras largas si superan los 12 chars */
+    overflow-wrap: break-word;
+
+    white-space: normal;
+    /* Permite que el texto salte de línea */
+    user-select: none;
+    font-weight: 600;
+}
+
+.node:hover .label {
+    color: var(--text-primary);
+}
+
+.node.active .label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.node.active .label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.node .dot {
+    width: var(--node-size);
+    height: var(--node-size);
+}
+
+.node.branch-0 .dot {
+    box-shadow: 0 0 0 2px var(--branch-blue);
+}
+
+.node.branch-1 .dot {
+    box-shadow: 0 0 0 2px var(--branch-green);
+}
+
+.node.branch-2 .dot {
+    box-shadow: 0 0 0 2px var(--branch-orange);
+}
+
+.node.branch-3 .dot {
+    box-shadow: 0 0 0 2px var(--branch-pink);
+}
+
+.node {
+    position: relative;
+    /* Mantener esto para que el label se posicione respecto al nodo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Asegura centrado vertical */
+}
+
+.line-node-row {
+    display: flex;
+    align-items: center;
+    /* Esto mantiene las líneas y la bolita siempre alineadas al centro */
+    height: var(--node-size);
+    /* Forzamos que la fila de la línea tenga la altura de la bolita */
+}
+
+.label {
+    position: absolute;
+    top: calc(var(--node-size) + 10px);
+    /* Posiciona el texto siempre 10px debajo de la bolita */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Centrado horizontal perfecto */
+
+    /* Tus reglas anteriores */
+    max-width: 12ch;
+    text-align: center;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.2;
+}
+
+.node.active .dot {
+    box-shadow: 0 0 15px currentColor;
+    /* Resplandor del color de la rama */
+    transition: box-shadow 0.3s ease;
+}
+
+/* Animación opcional de latido para el estado actual */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.node.current-state .dot::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    animation: pulse 2s infinite;
+}
+
+/* Caso 1: Azul -> Verde */
+.node.branch-0 {
+    --this-branch: var(--branch-blue);
+    --next-branch: var(--branch-green);
+    --prev-branch: var(--branch-pink);
+    /* Para el ciclo hacia atrás */
+    color: var(--branch-blue);
+}
+
+/* Caso 2: Verde -> Naranja */
+.node.branch-1 {
+    --this-branch: var(--branch-green);
+    --next-branch: var(--branch-orange);
+    --prev-branch: var(--branch-blue);
+    color: var(--branch-green);
+}
+
+/* Caso 3: Naranja -> Rosa */
+.node.branch-2 {
+    --this-branch: var(--branch-orange);
+    --next-branch: var(--branch-pink);
+    --prev-branch: var(--branch-green);
+    color: var(--branch-orange);
+}
+
+/* Caso 4: Rosa -> Azul (Cierra el ciclo) */
+.node.branch-3 {
+    --this-branch: var(--branch-pink);
+    --next-branch: var(--branch-blue);
+    --prev-branch: var(--branch-orange);
+    color: var(--branch-pink);
+}
+
+/* El primer nodo de la timeline no tiene gradiente a la izquierda */
+.node:first-child .line.left {
+    background: linear-gradient(to left, var(--this-branch), #0A0E14);
+}
+
+/* El último nodo de la timeline no tiene gradiente a la derecha */
+.node:last-child .line.right {
+    background: linear-gradient(to right, var(--this-branch), #0A0E14);
+}
+
+/* Línea que sale del nodo (hacia la derecha) */
+.line.right {
+    width: 120px;
+    height: var(--line-thickness);
+    background: linear-gradient(to right,
+            var(--this-branch) 0%,
+            var(--next-branch) 100%);
+}
+
+/* La línea izquierda del siguiente nodo debe nacer del color anterior */

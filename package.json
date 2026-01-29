@@ -1,0 +1,53 @@
+{
+  "name": "cherrytimeline",
+  "displayName": "TimeLine",
+  "description": "Extensión que permite visualizar y gestionar una línea de tiempo interactiva dentro de VS Code.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.107.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cherrytimeline.createSnapshot",
+        "title": "Crear Snapshot"
+      },
+      {
+        "command": "cherrytimeline.openTimeline",
+        "title": "Ver Timeline"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "cherrytimeline.createSnapshot",
+        "key": "ctrl+shift+s",
+        "mac": "cmd+shift+s",
+        "when": "editorFocus"
+      },
+      {
+        "command": "cherrytimeline.openTimeline",
+        "key": "ctrl+t ctrl+l",
+        "mac": "cmd+t cmd+l",
+        "when": "editorFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.108.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "eslint": "^9.39.2",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

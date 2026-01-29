@@ -1,65 +1,74 @@
-# cherrytimeline README
+# Simple CherryTimeline
 
-This is the README for your extension "cherrytimeline". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Simple CherryTimeline is a Visual Studio Code extension to create, visualize, and restore **snapshots of files** through an interactive, Git-style timeline.  
+It provides a visual graph to navigate file history quickly and restore specific states without manual file selection.
 
 ---
 
-## Working with Markdown
+## Features
 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+- **Create snapshots** of the currently active file.
+- **Visual timeline view** inspired by Git graphs:
+  - Nodes connected by branches.
+  - Zoom and pan like a canvas editor (Figma/Godot-style).
+- **Snapshot details panel**:
+  - Name
+  - Timestamp
+  - Comment
+  - File content preview
+- **Restore snapshots** automatically linked to their original file.
+- **Delete individual snapshots** (not the entire history).
+- **Keyboard shortcuts** for fast workflow.
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
+> The timeline opens in its own editor tab, just like a normal file.
 
-## For more information
+---
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## Keyboard Shortcuts
 
-**Enjoy!**
+| Action | Shortcut |
+|------|---------|
+| Create snapshot | `Ctrl + Shift + S` |
+| Open timeline | `Ctrl + T`, then `Ctrl + L` |
+
+---
+
+## Requirements
+
+No external dependencies.  
+Works out of the box on VS Code.
+
+---
+
+## Extension Settings
+
+This extension does not add custom settings yet.
+
+---
+
+## Known Issues
+
+- Large files may cause slower snapshot rendering.
+- Very large snapshot histories can impact timeline performance.
+
+---
+
+## Release Notes
+
+### 1.0.0
+
+- Initial release
+- Snapshot creation and restoration
+- Visual timeline with graph layout
+- Zoom, pan, and interactive node selection
+
+---
+
+## Concept
+
+CherryTimeline is designed as a **visual snapshot manager**, not a Git replacement.  
+It focuses on fast iteration, experimentation, and recovery during development.
+
+---
+
+Enjoy Simple CherryTimeline 🍒

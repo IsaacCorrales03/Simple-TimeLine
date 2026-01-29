@@ -1,10 +1,13 @@
 {
-  "name": "cherrytimeline",
-  "displayName": "TimeLine",
+  "name": "simplecherrytimeline",
+  "publisher": "NaturalCherry",
+  "repository": "https://github.com/IsaacCorrales03/Simple-TimeLine",
+
+  "displayName": "Simple CherryTimeLine",
   "description": "Extensión que permite visualizar y gestionar una línea de tiempo interactiva dentro de VS Code.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.107.0"
+    "vscode": "^1.108.1"
   },
   "categories": [
     "Other"
